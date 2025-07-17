@@ -5,21 +5,41 @@ const App = () => {
   let [input, setInput] = useState("");
   let [task, setTask] = useState([]);
   let [dragtask,setdragtask]=useState(null)
+  let [uptask,setuptask]=useState(null)
   let handle = (e) => {
     setInput(e.target.value);
     // console.log(e.target.value)
   };
   let key = (e) => {
-    if (e.key === "Enter") {
-      console.log("done");
-      let adding = {
-        task: input,
-        status: status[0],
-        id: Date.now(),
-      };
 
-      setTask((prev) => [...prev, adding]);
+
+    if (e.key === "Enter") {
+      // console.log("done");
+      if(uptask) {
+   const obj={
+    task:input,
+    status:uptask.status,
+    id:uptask.id
+   }
+let copy =[...task]
+copy=copy.filter((item)=>item.id !==uptask.id)
+setTask((prev)=>[...copy,obj])
+setuptask(null)
+setInput("")
+
+      }else{
+        let adding = {
+          task: input,
+          status: status[0],
+          id: Date.now(),
+        };
+        setTask((prev) => [...prev, adding]);
       setInput("");
+
+      }
+      
+
+      
     }
   };
   console.log(task);
@@ -50,11 +70,26 @@ let drophandle = (e) => {
     handledrop(status);
   }
 };
+
+let deletetask =(item)=>{
+  let copy=[...task]
+  copy=copy.filter((task)=>task.id !==item.id)
+  setTask(copy)
+  // console.log(copy)
+
+}
+
+let update=(item)=>{
+setInput(item.task)
+setuptask(item)
+}
   return (
-    <div className="flex h-screen justify-start mt-[100px] flex-col items-center bg-gray-100">
-      <div className="flex justify-center items-center flex-col mb-8">
+    <div className="flex h-screen justify-start   flex-col items-center bg-gray-100">
+      <div className="flex justify-center items-center mt-[100px] flex-col mb-8">
         <h1 className="text-3xl font-bold mb-2">Task Manager</h1>
-        <p className="text-lg text-gray-700 mb-4">To-Do List</p>
+        <p className="text-lg text-gray-700 mb-2">To-Do List</p>
+        <p className="text-lg text-gray-700 mb-4 font-bold">With Drag and Drop Functionality</p>
+
         <input
           className="border w-[250px] px-3 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={input}
@@ -86,9 +121,9 @@ let drophandle = (e) => {
                       style={{ opacity: dragtask === item.id ? 0.5 : 1 }}
                     >
                       <p className="truncate">{item.task}</p>
-                      <div className="flex gap-2">
-                        <button className="hover:text-blue-600">🖊️</button>
-                        <button className="hover:text-red-600">🗑️</button>
+                      <div className="flex gap-5">
+                        <button className="hover:text-blue-600" onClick={(e)=>update(item)} > 🖊️</button>
+                        <button className="hover:text-red-600 w-[30px] h-[30px] cursor-pointer rounded-[50%] hover:bg-red-500" onClick={(e)=>deletetask(item)}  >🗑️</button>
                       </div>
                     </div>
                   )
@@ -117,8 +152,8 @@ let drophandle = (e) => {
                     >
                       <p className="truncate">{item.task}</p>
                       <div className="flex gap-2">
-                        <button className="hover:text-yellow-600">🖊️</button>
-                        <button className="hover:text-red-600">🗑️</button>
+                        <button className="hover:text-yellow-600" onClick={(e)=>update(item)}>🖊️</button>
+                        <button className="hover:text-red-600" onClick={(e)=>deletetask(item)} >🗑️</button>
                       </div>
                     </div>
                   )
@@ -147,8 +182,8 @@ let drophandle = (e) => {
                     >
                       <p className="truncate">{item.task}</p>
                       <div className="flex gap-2">
-                        <button className="hover:text-green-600">🖊️</button>
-                        <button className="hover:text-red-600">🗑️</button>
+                        <button className="hover:text-green-600 "onClick={(e)=>update(item)} >🖊️</button>
+                        <button className="hover:text-red-600" onClick={(e)=>deletetask(item)} >🗑️</button>
                       </div>
                     </div>
                   )
